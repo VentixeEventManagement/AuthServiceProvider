@@ -1,8 +1,9 @@
-﻿using Presentation.Models;
+﻿using Presentation.Interfaces;
+using Presentation.Models;
 
 namespace Presentation.Services;
 
-public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient)
+public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient) : IAuthService
 {
     private readonly AccountGrpcService.AccountGrpcServiceClient _accountClient = accountClient;
 
