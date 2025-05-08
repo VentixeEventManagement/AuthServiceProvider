@@ -20,4 +20,14 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await _authService.SignUpAsync(form);
         return result.Succeeded ? Ok(result) : Problem(result.Message);
     }
+
+    [HttpPost("signin")]
+    public async Task<IActionResult> SignIn([FromBody] SignInForm form)
+    {
+        if(!ModelState.IsValid)
+            return Unauthorized("Invalid credentials.");
+
+        var result = await _authService.SignInAsync(form);
+        return result.Succeeded? Ok(result) : Unauthorized(result.Message);
+    }
 }
