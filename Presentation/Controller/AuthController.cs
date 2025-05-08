@@ -1,5 +1,11 @@
-﻿namespace Presentation.Controller;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-public class AuthController
+namespace Presentation.Controller
 {
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+    }
 }
