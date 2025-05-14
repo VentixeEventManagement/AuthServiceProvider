@@ -23,8 +23,6 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
         }
     }
 
-
-
     public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
     {
         try
