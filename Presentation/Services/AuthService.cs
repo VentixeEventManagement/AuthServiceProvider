@@ -23,7 +23,6 @@ public class AuthService : IAuthService
     {
         try
         {
-
             await _serviceBus.PublishAsync(email);
 
             return new SignUpResult { Succeeded = true, Message = "Verification code sent to email." };
@@ -46,8 +45,6 @@ public class AuthService : IAuthService
             };
 
             var response = await _httpClient.PostAsJsonAsync($"https://verificationserviceprovider.azurewebsites.net/api/ValidateVerificationCode?code={_apiSettings.verificationCodeKey}", payload);
-
-
             if (!response.IsSuccessStatusCode)
             {
                 return new SignUpResult
