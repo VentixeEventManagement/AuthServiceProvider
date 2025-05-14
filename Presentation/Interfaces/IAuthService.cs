@@ -7,6 +7,6 @@ namespace Presentation.Interfaces
         Task<SignInResult> SignInAsync(SignInForm formData);
         //Task<SignUpResult> SignUpAsync(SignUpForm formData);
         Task<SignUpResult> VerificationCodeRequestAsync(string email);
-        Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignInForm formData, string verificationCode);
+        Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode);
     }
 }

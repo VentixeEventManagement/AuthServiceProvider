@@ -11,6 +11,40 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
     {
         try
         {
+
+            await _serviceBus.PublishAsync(email);
+
+            return new SignUpResult { Succeeded = true, Message = "Verification code sent to email." };
+
+        }
+        catch (Exception ex)
+        {
+            return new SignUpResult { Succeeded = false, Message = ex.Message };
+        }
+    }
+
+
+
+    public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
+    {
+        try
+        {
+            var payload = new
+            {
+                Email = formData.Email,
+                Code = verificationCode
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("https://verificationserviceprovider.azurewebsites.net/api/ValidateVerificationCode?code=", payload);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new SignUpResult
+                {
+                    Succeeded = false,
+                    Message = "Verification failed"
+                };
+            }
             var request = new CreateAccountRequest
             {
                 Email = formData.Email,
