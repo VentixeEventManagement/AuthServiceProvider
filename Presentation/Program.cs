@@ -17,6 +17,8 @@ builder.Services.AddGrpcClient<AccountGrpcService.AccountGrpcServiceClient>(opti
     option.Address = new Uri(builder.Configuration["Providers:AccountServiceProvider"]!);
 });
 
+builder.Services.AddTransient<AuthServiceBusHandler>();
+
 var app = builder.Build();
 app.MapOpenApi();
 app.UseSwagger();
