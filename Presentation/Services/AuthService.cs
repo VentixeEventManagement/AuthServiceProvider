@@ -1,16 +1,61 @@
-﻿using Presentation.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using Presentation.Interfaces;
 using Presentation.Models;
 
 namespace Presentation.Services;
 
-public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient) : IAuthService
+public class AuthService : IAuthService
 {
-    private readonly AccountGrpcService.AccountGrpcServiceClient _accountClient = accountClient;
+    private readonly AccountGrpcService.AccountGrpcServiceClient _accountClient;
+    private readonly AuthServiceBusHandler _serviceBus;
+    private readonly HttpClient _httpClient;
+    private readonly ApiSettings _apiSettings;
 
-    public async Task<SignUpResult> SignUpAsync(SignUpForm formData)
+    public AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient, AuthServiceBusHandler serviceBus, HttpClient httpClient, IConfiguration configuration, IOptions<ApiSettings> apiSettings)
+    {
+        _accountClient = accountClient;
+        _serviceBus = serviceBus;
+        _httpClient = httpClient;
+        _apiSettings = apiSettings.Value;
+    }
+
+    public async Task<SignUpResult> VerificationCodeRequestAsync(string email)
     {
         try
         {
+
+            await _serviceBus.PublishAsync(email);
+
+            return new SignUpResult { Succeeded = true, Message = "Verification code sent to email." };
+
+        }
+        catch (Exception ex)
+        {
+            return new SignUpResult { Succeeded = false, Message = ex.Message };
+        }
+    }
+
+    public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
+    {
+        try
+        {
+            var payload = new
+            {
+                Email = formData.Email,
+                Code = verificationCode
+            };
+
+            var response = await _httpClient.PostAsJsonAsync($"https://verificationserviceprovider.azurewebsites.net/api/ValidateVerificationCode?code={_apiSettings.verificationCodeKey}", payload);
+
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new SignUpResult
+                {
+                    Succeeded = false,
+                    Message = "Verification failed"
+                };
+            }
             var request = new CreateAccountRequest
             {
                 Email = formData.Email,
@@ -19,7 +64,7 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
 
             var reply = await _accountClient.CreateAccountAsync(request);
             return reply.Succeeded
-                ? new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId } // Kolla om du ska sätta in role här
+                ? new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId }
                 : new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message };
         }
         catch (Exception ex)
@@ -41,7 +86,7 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
             var reply = await _accountClient.ValidateCredentialsAsync(request);
             if (!reply.Succeeded)
             {
-                return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message};
+                return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message };
             }
 
             // Generate Token

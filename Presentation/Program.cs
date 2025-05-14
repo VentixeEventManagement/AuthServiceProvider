@@ -1,5 +1,6 @@
 using Presentation;
 using Presentation.Interfaces;
+using Presentation.Models;
 using Presentation.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +12,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(option => { option.AddPolicy("AllowAll", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); });
 
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddGrpcClient<AccountGrpcService.AccountGrpcServiceClient>(option =>
 {
     option.Address = new Uri(builder.Configuration["Providers:AccountServiceProvider"]!);
 });
+
+builder.Services.AddSingleton<AuthServiceBusHandler>();
 
 var app = builder.Build();
 app.MapOpenApi();
