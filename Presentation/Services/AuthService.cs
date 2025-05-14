@@ -41,7 +41,7 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
             var reply = await _accountClient.ValidateCredentialsAsync(request);
             if (!reply.Succeeded)
             {
-                return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message};
+                return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message };
             }
 
             // Generate Token

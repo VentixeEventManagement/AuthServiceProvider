@@ -21,13 +21,23 @@ public class AuthController(IAuthService authService) : ControllerBase
         return result.Succeeded ? Ok(result) : Problem(result.Message);
     }
 
+    [HttpPost("sendrequest")]
+    public async Task<IActionResult> SendEmailRequest(string email)
+    {
+        if (!string.IsNullOrWhiteSpace(email))
+            return BadRequest(email);
+
+        var result = await _authService.VerificationCodeRequestAsync(email);
+        return result.Succeeded ? Ok() : BadRequest(result.Message);
+    }
+
     [HttpPost("signin")]
-    public async Task<IActionResult> SignIn([FromBody] SignInForm form)
+    public async Task<IActionResult> SignIn([FromBody] SignInForm form, string verificationCode)
     {
         if(!ModelState.IsValid)
             return Unauthorized("Invalid credentials.");
 
-        var result = await _authService.SignInAsync(form);
-        return result.Succeeded? Ok(result) : Unauthorized(result.Message);
+        var result = await _authService.VerifyCodeAndCreateAccountAsync(form, verificationCode);
+        return result.Succeeded ? Ok(result) : Unauthorized(result.Message);
     }
 }
