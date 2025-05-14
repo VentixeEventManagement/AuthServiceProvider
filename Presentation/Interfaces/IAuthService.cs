@@ -1,12 +1,10 @@
 ﻿using Presentation.Models;
 
-namespace Presentation.Interfaces
+namespace Presentation.Interfaces;
+
+public interface IAuthService
 {
-    public interface IAuthService
-    {
-        Task<SignInResult> SignInAsync(SignInForm formData);
-        //Task<SignUpResult> SignUpAsync(SignUpForm formData);
-        Task<SignUpResult> VerificationCodeRequestAsync(string email);
-        Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode);
-    }
+    Task<SignInResult> SignInAsync(SignInForm formData);
+    Task<SignUpResult> VerificationCodeRequestAsync(string email);
+    Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode);
 }
