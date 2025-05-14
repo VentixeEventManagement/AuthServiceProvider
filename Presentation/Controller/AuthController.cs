@@ -24,7 +24,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("sendrequest")]
     public async Task<IActionResult> SendEmailRequest(string email)
     {
-        if (!string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(email))
             return BadRequest(email);
 
         var result = await _authService.VerificationCodeRequestAsync(email);

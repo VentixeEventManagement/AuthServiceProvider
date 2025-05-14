@@ -9,7 +9,7 @@ public class AuthServiceBusHandler
 
     public AuthServiceBusHandler(IConfiguration configuration)
     {
-        _client = new ServiceBusClient(configuration["ServiceBus: ConnectionString"]);
+        _client = new ServiceBusClient(configuration["ServiceBus:ConnectionString"]);
         _sender = _client.CreateSender(configuration["ServiceBus:AccountVerification"]);
     }
 
@@ -17,9 +17,6 @@ public class AuthServiceBusHandler
     {
         var message = new ServiceBusMessage(payload);
         await _sender.SendMessageAsync(message);
-
-        await _sender.DisposeAsync();
-        await _client.DisposeAsync();
     }
 
 }
