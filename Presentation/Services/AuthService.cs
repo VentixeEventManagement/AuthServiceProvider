@@ -19,7 +19,7 @@ public class AuthService(AccountGrpcService.AccountGrpcServiceClient accountClie
 
             var reply = await _accountClient.CreateAccountAsync(request);
             return reply.Succeeded
-                ? new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId }
+                ? new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId } // Kolla om du ska sätta in role här
                 : new SignUpResult { Succeeded = reply.Succeeded, Message = reply.Message };
         }
         catch (Exception ex)
