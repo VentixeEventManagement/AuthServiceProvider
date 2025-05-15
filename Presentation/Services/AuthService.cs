@@ -55,7 +55,7 @@ public class AuthService : IAuthService
                 };
             }
 
-            return new SignUpResult { Succeeded = true, Message = "Verification code sent successfully" };
+            return new SignUpResult { Succeeded = true, Message = "The account is verified" };
 
         } catch (Exception ex)
         {
@@ -71,6 +71,7 @@ public class AuthService : IAuthService
             {
                 Email = formData.Email,
                 Password = formData.Password,
+                Verified = formData.verified,
             };
 
             var reply = await _accountClient.CreateAccountAsync(request);
