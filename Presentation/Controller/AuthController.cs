@@ -27,7 +27,17 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(email);
 
         var result = await _authService.VerificationCodeRequestAsync(email);
-        return result.Succeeded ? Ok() : BadRequest(result.Message);
+        return result.Succeeded ? Ok(result.Message) : BadRequest(result.Message);
+    }
+
+    [HttpPost("verify")]
+    public async Task<IActionResult> VerifyCodeAsync(VerifyForm formData)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _authService.VerifyCodeAsync(formData);
+        return result.Succeeded ? Ok(result.Message) : Problem(result.Message);
     }
 
     [HttpPost("signin")]

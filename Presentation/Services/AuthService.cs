@@ -34,25 +34,39 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
+    public async Task<SignUpResult> VerifyCodeAsync(VerifyForm formData)
     {
         try
         {
             var payload = new
             {
-                Email = formData.Email,
-                Code = verificationCode
+                email = formData.Email,
+                code = formData.VerificationCode,
             };
 
             var response = await _httpClient.PostAsJsonAsync($"https://verificationserviceprovider.azurewebsites.net/api/ValidateVerificationCode?code={_apiSettings.verificationCodeKey}", payload);
             if (!response.IsSuccessStatusCode)
             {
+                var errorContent = await response.Content.ReadAsStringAsync();
                 return new SignUpResult
                 {
                     Succeeded = false,
-                    Message = "Verification failed"
+                    Message = $"Verification failed: {errorContent}"
                 };
             }
+
+            return new SignUpResult { Succeeded = true, Message = "Verification code sent successfully" };
+
+        } catch (Exception ex)
+        {
+            return new SignUpResult { Succeeded = false, Message = ex.Message };
+        }
+    }
+
+    public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
+    {
+        try
+        {
             var request = new CreateAccountRequest
             {
                 Email = formData.Email,
