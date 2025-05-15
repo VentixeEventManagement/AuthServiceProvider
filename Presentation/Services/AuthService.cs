@@ -63,7 +63,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<SignUpResult> VerifyCodeAndCreateAccountAsync(SignUpForm formData, string verificationCode)
+    public async Task<SignUpResult> SignUpAsync(SignUpForm formData)
     {
         try
         {

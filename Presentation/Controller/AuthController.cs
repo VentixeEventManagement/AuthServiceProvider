@@ -11,12 +11,12 @@ public class AuthController(IAuthService authService) : ControllerBase
     private readonly IAuthService _authService = authService;
 
     [HttpPost("signup")]
-    public async Task<IActionResult> SignUp([FromBody] SignUpForm form, string verificationCode)
+    public async Task<IActionResult> SignUp([FromBody] SignUpForm form)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _authService.VerifyCodeAndCreateAccountAsync(form, verificationCode);
+        var result = await _authService.SignUpAsync(form);
         return result.Succeeded ? Ok(result) : Problem(result.Message);
     }
 
