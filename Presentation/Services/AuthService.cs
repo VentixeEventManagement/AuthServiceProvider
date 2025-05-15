@@ -71,7 +71,6 @@ public class AuthService : IAuthService
             {
                 Email = formData.Email,
                 Password = formData.Password,
-                Verified = formData.verified,
             };
 
             var reply = await _accountClient.CreateAccountAsync(request);
