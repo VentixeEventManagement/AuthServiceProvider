@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Presentation.Interfaces;
 using Presentation.Models;
+using System.Text.Json;
 
 namespace Presentation.Services;
 
@@ -54,15 +55,21 @@ public class AuthService : IAuthService
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
 
-                var message = string.IsNullOrWhiteSpace(errorContent)
-               ? "Verification failed due to unknown error."
-               : $"Verification failed: {errorContent}";
+                var message = "";
 
-                return new SignUpResult
+                try
                 {
-                    Succeeded = false,
-                    Message = message
-                };
+                    var errorObj = JsonSerializer.Deserialize<Dictionary<string, string>>(errorContent);
+                    if (errorObj != null && errorObj.ContainsKey("message"))
+                    {
+                        message = errorObj["message"];
+                    }
+                } catch
+                {
+                    message = errorContent;
+                }
+
+                return new SignUpResult { Succeeded = false, Message = message };
             }
 
             return new SignUpResult { Succeeded = true, Message = "The account is verified" };
