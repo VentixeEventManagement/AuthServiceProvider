@@ -126,9 +126,15 @@ public class AuthService : IAuthService
                 return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message };
             }
 
+            var accountReplay = await _accountClient.GetAccountAsync(new GetAccountRequest { UserId = reply.UserId });
+            if (!accountReplay.Succeeded)
+            {
+                return new SignInResult { Succeeded = false, Message = "Failed to retrieve account info." };
+            }
+
             // Generate Token
 
-            return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId };
+            return new SignInResult { Succeeded = reply.Succeeded, Message = reply.Message, UserId = reply.UserId, RoleName = accountReplay.Account.RoleName };
         }
         catch (Exception ex)
         {
