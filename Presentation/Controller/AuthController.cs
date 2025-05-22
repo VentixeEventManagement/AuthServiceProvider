@@ -50,8 +50,8 @@ public class AuthController(IAuthService authService) : ControllerBase
         return result.Succeeded ? Ok(result) : Unauthorized(result.Message);
     }
 
-    [HttpGet("account")]
-    public async Task<IActionResult> GetAccountInfo(string userId)
+    [HttpGet("getaccount")]
+    public async Task<IActionResult> GetAccountInfo([FromQuery] string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
             return BadRequest("Invalid user id.");
