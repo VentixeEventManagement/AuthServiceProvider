@@ -141,4 +141,31 @@ public class AuthService : IAuthService
             return new SignInResult { Succeeded = false, Message = ex.Message };
         }
     }
+
+    public async Task<GetAccountResult<Account>> GetAccountInfoAsync(string userId)
+    {
+        try
+        {
+            var request = new GetAccountRequest
+            {
+                UserId = userId
+            };
+
+            var reply = await _accountClient.GetAccountAsync(request);
+            if (!reply.Succeeded)
+                return new GetAccountResult<Account> { Succeeded = false, Message = reply.Message };
+
+            var account = new Account
+            {
+                Email = reply.Account.Email,
+                PhoneNumber = reply.Account.PhoneNumber,
+            };
+
+            return new GetAccountResult<Account> { Succeeded = true, Message = "Account info retrieved", Account = account };
+        }
+        catch (Exception ex)
+        {
+            return new GetAccountResult<Account> { Succeeded = false, Message = ex.Message };
+        }
+    }
 }

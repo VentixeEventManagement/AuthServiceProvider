@@ -49,4 +49,17 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await _authService.SignInAsync(form);
         return result.Succeeded ? Ok(result) : Unauthorized(result.Message);
     }
+
+    [HttpGet("account")]
+    public async Task<IActionResult> GetAccountInfo(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            return BadRequest("Invalid user id.");
+
+        var account = await _authService.GetAccountInfoAsync(userId);
+        if (account == null)
+            return BadRequest("Account is null.");
+
+        return Ok(account);
+    }
 }

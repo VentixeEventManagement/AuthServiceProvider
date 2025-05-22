@@ -8,4 +8,5 @@ public interface IAuthService
     Task<SignUpResult> VerificationCodeRequestAsync(string email);
     Task<SignUpResult> SignUpAsync(SignUpForm formData);
     Task<SignUpResult> VerifyCodeAsync(VerifyForm formData);
+    Task<GetAccountResult<Account>> GetAccountInfoAsync(string userId);
 }
