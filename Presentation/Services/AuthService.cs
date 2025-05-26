@@ -168,4 +168,9 @@ public class AuthService : IAuthService
             return new GetAccountResult<Account> { Succeeded = false, Message = ex.Message };
         }
     }
+
+    public async Task<RoleResponse> UpdateRoleAsync(string id, string newRole)
+    {
+
+    }
 }
