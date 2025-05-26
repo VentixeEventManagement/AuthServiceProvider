@@ -171,6 +171,17 @@ public class AuthService : IAuthService
 
     public async Task<RoleResponse> UpdateRoleAsync(string id, string newRole)
     {
+        try
+        {
+            var request = new ChangeUserRoleRequest { UserId = id, NewRole = newRole };
 
+            var reply = await _accountClient.ChangeUserRoleAsync(request);
+
+            return new RoleResponse { Succeeded = true, Message = reply.Message };
+
+        } catch (Exception ex)
+        {
+            return new RoleResponse { Message = $"Error while changing role: {ex.Message}" };
+        }
     }
 }

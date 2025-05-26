@@ -1,7 +1,6 @@
 using Presentation;
 using Presentation.Interfaces;
 using Presentation.Models;
-using Presentation.Seeders;
 using Presentation.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,13 +23,6 @@ builder.Services.AddGrpcClient<AccountGrpcService.AccountGrpcServiceClient>(opti
 builder.Services.AddSingleton<AuthServiceBusHandler>();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await RoleSeeder.SeedRolesAsync(services);
-}
-
 app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI(option =>

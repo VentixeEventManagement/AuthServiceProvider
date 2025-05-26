@@ -62,4 +62,15 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return Ok(account);
     }
+
+    [HttpPut("changerole")]
+    public async Task<IActionResult> ChangeRole([FromQuery] string userId, [FromQuery] string role)
+    {
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(role))
+            return BadRequest("UserId and role are required.");
+
+        var result = await _authService.UpdateRoleAsync(userId, role);
+
+        return result.Succeeded ? Ok(result) : Problem(result.Message);
+    }
 }
