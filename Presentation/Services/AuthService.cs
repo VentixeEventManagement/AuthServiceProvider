@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.Options;
 using Presentation.Interfaces;
 using Presentation.Models;
 using System.Text.Json;
@@ -140,6 +141,19 @@ public class AuthService : IAuthService
         {
             return new SignInResult { Succeeded = false, Message = ex.Message };
         }
+    }
+
+    public async Task<IEnumerable<Account>> GetAllAccountsAsync()
+    {
+        var request = new GetAccountsRequest();
+        var reply = await _accountClient.GetAccountsAsync(request);
+
+        return reply.Accounts.Select(a => new Account
+        {
+            Email = a.Email,
+            PhoneNumber = a.PhoneNumber,
+            RoleName = a.RoleName,
+        });
     }
 
     public async Task<GetAccountResult<Account>> GetAccountInfoAsync(string userId)

@@ -10,4 +10,5 @@ public interface IAuthService
     Task<SignUpResult> VerifyCodeAsync(VerifyForm formData);
     Task<GetAccountResult<Account>> GetAccountInfoAsync(string userId);
     Task<RoleResponse> UpdateRoleAsync(string id, string newRole);
+    Task<IEnumerable<Account>> GetAllAccountsAsync();
 }

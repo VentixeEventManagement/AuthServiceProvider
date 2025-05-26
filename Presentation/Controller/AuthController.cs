@@ -50,6 +50,16 @@ public class AuthController(IAuthService authService) : ControllerBase
         return result.Succeeded ? Ok(result) : Unauthorized(result.Message);
     }
 
+    [HttpGet("getaccounts")]
+    public async Task<IActionResult> GetAccounts()
+    {
+        var accounts = await _authService.GetAllAccountsAsync();
+        if (accounts == null)
+            return BadRequest("No accounts found.");
+
+        return Ok(accounts);
+    }
+
     [HttpGet("getaccount")]
     public async Task<IActionResult> GetAccountInfo([FromQuery] string userId)
     {
