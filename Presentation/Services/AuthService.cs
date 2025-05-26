@@ -159,6 +159,7 @@ public class AuthService : IAuthService
             {
                 Email = reply.Account.Email,
                 PhoneNumber = reply.Account.PhoneNumber,
+                RoleName = reply.Account.RoleName,
             };
 
             return new GetAccountResult<Account> { Succeeded = true, Message = "Account info retrieved", Account = account };
