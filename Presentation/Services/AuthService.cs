@@ -150,6 +150,7 @@ public class AuthService : IAuthService
 
         return reply.Accounts.Select(a => new Account
         {
+            UserId = a.UserId,
             Email = a.Email,
             PhoneNumber = a.PhoneNumber,
             RoleName = a.RoleName,
@@ -171,6 +172,7 @@ public class AuthService : IAuthService
 
             var account = new Account
             {
+                UserId = reply.Account.UserId,
                 Email = reply.Account.Email,
                 PhoneNumber = reply.Account.PhoneNumber,
                 RoleName = reply.Account.RoleName,
