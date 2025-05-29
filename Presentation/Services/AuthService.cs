@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Presentation.Interfaces;
 using Presentation.Models;
 using System.Text.Json;
@@ -9,11 +8,11 @@ namespace Presentation.Services;
 public class AuthService : IAuthService
 {
     private readonly AccountGrpcService.AccountGrpcServiceClient _accountClient;
-    private readonly AuthServiceBusHandler _serviceBus;
+    private readonly IAuthServiceBusHandler _serviceBus;
     private readonly HttpClient _httpClient;
     private readonly ApiSettings _apiSettings;
 
-    public AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient, AuthServiceBusHandler serviceBus, HttpClient httpClient, IConfiguration configuration, IOptions<ApiSettings> apiSettings)
+    public AuthService(AccountGrpcService.AccountGrpcServiceClient accountClient, IAuthServiceBusHandler serviceBus, HttpClient httpClient, IConfiguration configuration, IOptions<ApiSettings> apiSettings)
     {
         _accountClient = accountClient;
         _serviceBus = serviceBus;
@@ -201,4 +200,5 @@ public class AuthService : IAuthService
             return new RoleResponse { Message = $"Error while changing role: {ex.Message}" };
         }
     }
+
 }
