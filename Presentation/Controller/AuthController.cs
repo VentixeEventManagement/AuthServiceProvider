@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Presentation.Documentation;
 using Presentation.Interfaces;
 using Presentation.Models;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Presentation.Controller;
 
@@ -11,6 +14,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     private readonly IAuthService _authService = authService;
 
     [HttpPost("signup")]
+    [Consumes("application/json")]
+    [SwaggerOperation(Summary = "Register a new user.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "User registration succeeded.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid registration data.")]
+    [SwaggerRequestExample(typeof(SignUpForm), typeof(SignUpForm_Example))]  // Om du har en exempelklass
     public async Task<IActionResult> SignUp([FromBody] SignUpForm form)
     {
         if (!ModelState.IsValid)
@@ -21,17 +29,25 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("sendrequest")]
-    public async Task<IActionResult> SendEmailRequest(string email)
+    [SwaggerOperation(Summary = "Request a verification code by email.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Verification code sent.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid email.")]
+    public async Task<IActionResult> SendEmailRequest([FromQuery] string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            return BadRequest(email);
+            return BadRequest("Email is required.");
 
         var result = await _authService.VerificationCodeRequestAsync(email);
         return result.Succeeded ? Ok(result.Message) : BadRequest(result.Message);
     }
 
     [HttpPost("verify")]
-    public async Task<IActionResult> VerifyCodeAsync(VerifyForm formData)
+    [Consumes("application/json")]
+    [SwaggerOperation(Summary = "Verify a given code.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Verification succeeded.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid verification data.")]
+    [SwaggerRequestExample(typeof(VerifyForm), typeof(VerifyForm_Example))] // Om du har en exempelklass
+    public async Task<IActionResult> VerifyCodeAsync([FromBody] VerifyForm formData)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -41,9 +57,14 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("signin")]
+    [Consumes("application/json")]
+    [SwaggerOperation(Summary = "Sign in a user.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Sign-in succeeded.")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid credentials.")]
+    [SwaggerRequestExample(typeof(SignInForm), typeof(SignInForm_Example))] // Om du har en exempelklass
     public async Task<IActionResult> SignIn([FromBody] SignInForm form)
     {
-        if(!ModelState.IsValid)
+        if (!ModelState.IsValid)
             return Unauthorized("Invalid credentials.");
 
         var result = await _authService.SignInAsync(form);
@@ -51,6 +72,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpGet("getaccounts")]
+    [SwaggerOperation(Summary = "Get all accounts.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Accounts retrieved successfully.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "No accounts found.")]
     public async Task<IActionResult> GetAccounts()
     {
         var accounts = await _authService.GetAllAccountsAsync();
@@ -61,6 +85,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpGet("getaccount")]
+    [SwaggerOperation(Summary = "Get account info by user ID.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Account info retrieved successfully.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid user ID or account not found.")]
     public async Task<IActionResult> GetAccountInfo([FromQuery] string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -74,6 +101,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPut("changerole")]
+    [SwaggerOperation(Summary = "Change the role of a user.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Role updated successfully.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "UserId and role are required.")]
     public async Task<IActionResult> ChangeRole([FromQuery] string userId, [FromQuery] string role)
     {
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(role))
