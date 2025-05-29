@@ -20,7 +20,7 @@ builder.Services.AddGrpcClient<AccountGrpcService.AccountGrpcServiceClient>(opti
     option.Address = new Uri(builder.Configuration["Providers:AccountServiceProvider"]!);
 });
 
-builder.Services.AddSingleton<AuthServiceBusHandler>();
+builder.Services.AddSingleton<IAuthServiceBusHandler, AuthServiceBusHandler>();
 
 var app = builder.Build();
 app.MapOpenApi();

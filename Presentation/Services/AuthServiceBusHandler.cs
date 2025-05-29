@@ -1,8 +1,9 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Presentation.Interfaces;
 
 namespace Presentation.Services;
 
-public class AuthServiceBusHandler
+public class AuthServiceBusHandler : IAuthServiceBusHandler
 {
     private readonly ServiceBusClient _client;
     private readonly ServiceBusSender _sender;
@@ -13,7 +14,7 @@ public class AuthServiceBusHandler
         _sender = _client.CreateSender(configuration["ServiceBus:AccountVerification"]);
     }
 
-    public async Task PublishAsync(string payload)
+    public virtual async Task PublishAsync(string payload)
     {
         var message = new ServiceBusMessage(payload);
         await _sender.SendMessageAsync(message);
